@@ -3,7 +3,12 @@ import { IAddressProvider__factory, PathFinder } from '@gearbox-protocol/sdk'
 import { providers, ethers } from 'ethers'
 
 import { ADDRESS_PROVIDER, CHAIN_TYPE } from '../../config'
-import { getV2CAs, getV2CAsTotalValue, getV2CMs } from './creditAccounts'
+import {
+  getV1CAs,
+  getV2CAs,
+  getV2CAsTotalValue,
+  getV2CMs
+} from './creditAccounts'
 import { getPoolTVL } from './pools'
 import { getPrices, getPriceTokens } from './prices'
 import { tokenListWithEth } from './tokens'
@@ -50,10 +55,15 @@ export const getProtocolTVL = async () => {
   // V2 CreditAccounts TVL in USD
   const cm = await getV2CMs()
   const ca = await getV2CAs(cm)
-  const v2USD = await getV2CAsTotalValue(cm, ca)
+  const v2USD = await getV2CAsTotalValue(cm, ca, prices, tokensList)
 
   // V1 CreditAccounts TVL
-  // todo
+  const v1USD = await getV1CAs(prices, tokensList)
 
-  return { tvl: poolsUSD + v2USD, pool: poolsUSD, v2CA: v2USD }
+  return {
+    tvl: poolsUSD + v2USD + v1USD,
+    pool: poolsUSD,
+    v2CA: v2USD,
+    v1CA: v1USD
+  }
 }

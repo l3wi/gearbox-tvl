@@ -32,13 +32,13 @@ export const getPoolTVL = async (
   const calls: Array<MCall<IPoolServiceInterface>> = pools.map((pool) => ({
     address: pool.addr,
     interface: IPoolService__factory.createInterface(),
-    method: 'expectedLiquidity()',
+    method: 'availableLiquidity()',
     params: []
   }))
 
   // Execute MultiCalls
   const values = await callRepeater(() =>
-    multicall<Array<AwaitedRes<IPoolService['expectedLiquidity']>>>(
+    multicall<Array<AwaitedRes<IPoolService['availableLiquidity']>>>(
       calls,
       provider
     )
